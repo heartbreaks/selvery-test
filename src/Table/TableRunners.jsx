@@ -4,24 +4,6 @@ import {Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, 
 import {connect} from "react-redux";
 import TableRunnersToolbar from "./TableRunnersToolbar";
 import TableRunnersHead from "./TableRunnersHead";
-import {bindActionCreators} from "redux";
-import stableSort from "../redux/actions";
-
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -50,27 +32,49 @@ const useStyles = makeStyles((theme) => ({
 function TableRunners(props) {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+    const [orderBy, setOrderBy] = React.useState('regDate');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const {listUsers} = props
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, listUsers.length - page * rowsPerPage);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+
+    const stableSort = (array, comparator) => {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) return order;
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+    }
+    const descendingComparator = (a, b, orderBy) => {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+        return 0;
+    }
+    const getComparator = (order, orderBy) => {
+        return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+    }
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, listUsers.length - page * rowsPerPage);
 
     return (
         <div className={classes.root}>
@@ -90,7 +94,7 @@ function TableRunners(props) {
                             rowCount={listUsers.length}
                         />
                         <TableBody>
-                            {props.stableSort(listUsers, getComparator(order, orderBy))
+                            {stableSort(listUsers, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     return (
@@ -98,21 +102,23 @@ function TableRunners(props) {
                                             hover
                                             role="checkbox"
                                             tabIndex={-1}
-                                            key={row.name}>
-                                            <TableCell component="th" align="center" scope="row" padding="none">
+                                            key={row.name}
+                                        >
+                                            <TableCell component="th" scope="row" padding="none">
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell align="center">{row.date}</TableCell>
-                                            <TableCell align="center">1</TableCell>
-                                            <TableCell align="center">{row.payment}</TableCell>
-                                            <TableCell align="center">{row.distance}</TableCell>
+                                            <TableCell align="right">{row.date}</TableCell>
+                                            <TableCell align="right">{row.regDate}</TableCell>
+                                            <TableCell align="left">{row.payment}</TableCell>
+                                            <TableCell align="left">{row.distance}</TableCell>
                                         </TableRow>
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow >
+                                <TableRow style={{ height: ( 33 ) * emptyRows }}>
                                     <TableCell colSpan={6} />
-                                </TableRow>)}
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -134,9 +140,4 @@ function mapStateToProps(state){
         listUsers: state.users
     }
 }
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        stableSort
-    }, dispatch)
-}
-export default connect(mapStateToProps, mapDispatchToProps)(TableRunners)
+export default connect(mapStateToProps)(TableRunners)

@@ -14,15 +14,13 @@ const useToolbarStyles = makeStyles((theme) => ({
 }));
 
 function EnhancedTableToolbar(props){
-
-        const classes = useToolbarStyles();
-        return (
-            <Toolbar>
-                <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    Участники
-                </Typography>
-            </Toolbar>
-        );
-    };
-
+    const classes = useToolbarStyles();
+    return (
+       <Toolbar>
+           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+                 Участники
+           </Typography>
+       </Toolbar>
+    );
+}
 export default connect(null)(EnhancedTableToolbar)

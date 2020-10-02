@@ -8,7 +8,6 @@ function TableRunnersHead(props) {
         onRequestSort(event, property);
     };
     const headCells = [
-        { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
         { id: 'date', numeric: false, disablePadding: false, label: 'Birthday' },
         { id: 'regDate', numeric: false, disablePadding: false, label: 'Registered' },
         { id: 'payment', numeric: true, disablePadding: false, label: 'Payment' },
@@ -17,6 +16,7 @@ function TableRunnersHead(props) {
     return (
         <TableHead>
             <TableRow>
+                <TableCell align="center" padding='default'>Name</TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
