@@ -1,9 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper} from '@material-ui/core';
+import {Table, TableContainer, TablePagination, Paper} from '@material-ui/core';
 import {connect} from "react-redux";
 import TableRunnersToolbar from "./TableRunnersToolbar";
 import TableRunnersHead from "./TableRunnersHead";
+import TableRunnersBody from './TableRunnersBody'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,7 +37,7 @@ function TableRunners(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const {listUsers} = props
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, listUsers.length - page * rowsPerPage);
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -93,37 +94,17 @@ function TableRunners(props) {
                             onRequestSort={handleRequestSort}
                             rowCount={listUsers.length}
                         />
-                        <TableBody>
-                            {stableSort(listUsers, getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <TableRow
-                                            hover
-                                            role="checkbox"
-                                            tabIndex={-1}
-                                            key={row.name}
-                                        >
-                                            <TableCell component="th" scope="row" padding="none">
-                                                {row.name}
-                                            </TableCell>
-                                            <TableCell align="right">{row.date}</TableCell>
-                                            <TableCell align="right">{row.regDate}</TableCell>
-                                            <TableCell align="left">{row.payment}</TableCell>
-                                            <TableCell align="left">{row.distance}</TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: ( 33 ) * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
+                        <TableRunnersBody
+                            order={order}
+                            orderBy={orderBy}
+                            stableSort={stableSort}
+                            getComparator={getComparator}
+                            rowsPerPage={rowsPerPage}
+                            page={page}/>
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[5, 10]}
                     component="div"
                     count={listUsers.length}
                     rowsPerPage={rowsPerPage}
