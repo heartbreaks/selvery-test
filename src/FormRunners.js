@@ -1,36 +1,43 @@
 import React from 'react'
 import {connect} from "react-redux";
-import {Col, Row} from "react-bootstrap";
-import {TextField, Button, Select, MenuItem, InputAdornment} from '@material-ui/core'
-import Input from "@material-ui/core/Input";
-import { addNewPerticipiant } from './redux/actions'
 import {bindActionCreators} from "redux";
+import { addNewPerticipiant } from './redux/actions'
+import {Col, Row} from "react-bootstrap";
+import {TextField, Button, Select, MenuItem, InputAdornment, Input} from '@material-ui/core'
+import {TextMaskCustom} from './Table/TextMaskCustom'
 
 function FormRunners(props){
-
+    const disableButton = 'Mui-disabled Mui-disabled'
     const [values, setValues] = React.useState({
-        name: '', date: '2017-05-24',
-        email: '', phone: '',
-        distance: '', payment: 0
+        id: '', name: '', date: '2017-05-24', email: '',
+        phone: '+7', distance: '', payment: 0
     })
+    const [changed, setChange] = React.useState({
+        name: false, email: false, phone: false,
+        distance: false, payment: false
+    })
+    let {name, email, phone, distance, payment} = changed
 
     const changeInputHandler = (prop) => (event) => {
         event.persist()
-        setValues({ ...values, [prop]: event.target.value,  regDate: new Date()
-                    .toLocaleTimeString('ru-ru',{year: '2-digit',month: '2-digit',day: '2-digit'})});
+        setValues({ ...values, [prop]: event.target.value, id: Date.now(),
+            regDate: new Date().toLocaleTimeString('ru-ru',{year: '2-digit',month: '2-digit',day: '2-digit'})});
+        setChange({...changed, [prop]: true})
     };
-
     const addNewParticipant = (event) => {
         event.preventDefault()
         props.addNewPerticipiant(values)
-        setValues({ ...values, name: '', date: '2017-05-24', email: '', phone: '', distance: '', payment: 0});
+        setValues({ ...values, name: '', date: '2017-05-24', email: '', phone: '+7', distance: '', payment: 0});
+        setChange({...changed, name: false, email: false, phone: false, distance: false, payment: false})
     };
+
+    const isFilled = name && email && phone && distance && payment
 
     return (
         <Col>
             <form onSubmit={addNewParticipant}>
                 <Row>
-                    <Col md={2} className='d-flex justify-content-sm-center mt-sm-3'>
+                    <Col md={3} className='d-flex justify-content-sm-center mt-sm-3'>
                         <TextField name='name'
                                    id="standard-basic"
                                    onChange={changeInputHandler('name')}
@@ -41,7 +48,7 @@ function FormRunners(props){
                         <TextField name='date'
                                    id="date"
                                    onChange={changeInputHandler('date')}
-                                   label="Birthday"
+                                   label="Дата рождения"
                                    type="date"
                                    value={values.date}/>
                     </Col>
@@ -54,27 +61,24 @@ function FormRunners(props){
                                    label="E-mail" />
                     </Col>
                     <Col md={2}  className='d-flex justify-content-sm-center mt-sm-3'>
-                        <TextField name='phone'
-                                   onChange={changeInputHandler('phone')}
-                                   id="standard-basic"
-                                   type="phone"
-                                   value={values.phone}
-                                   label="Phone" />
+                        <Input name='phone'
+                               onChange={changeInputHandler('phone')}
+                               id="standard-basic"
+                               type="phone"
+                               value={values.phone}
+                               label="Phone"
+                               inputComponent={TextMaskCustom} />
                     </Col>
                     <Col md={1} className='d-flex justify-content-sm-center mt-sm-3'>
-                        <Select
-                            value={values.distance}
-                            onChange={changeInputHandler('distance')}
-                            displayEmpty
-                            name="distance"
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem value="">
-                                <em>Distance</em>
-                            </MenuItem>
-                            <MenuItem value={3}>3 km</MenuItem>
-                            <MenuItem value={5}>5 km</MenuItem>
-                                <MenuItem value={10}>10 km</MenuItem>
+                        <Select value={values.distance}
+                                onChange={changeInputHandler('distance')}
+                                displayEmpty
+                                name="distance"
+                                inputProps={{ 'aria-label': 'Without label' }}>
+                                <MenuItem value=""><em>Дистанция</em></MenuItem>
+                                <MenuItem value={3}>3 км</MenuItem>
+                                <MenuItem value={5}>5 км</MenuItem>
+                                <MenuItem value={10}>10 км</MenuItem>
                         </Select>
                     </Col>
                     <Col md={2} className='d-flex justify-content-sm-center mt-sm-3'>
@@ -86,9 +90,11 @@ function FormRunners(props){
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                         />
                     </Col>
-                    <Button variant="contained" type="submit" color="secondary" className='d-flex justify-content-sm-center mt-sm-3'>
-                        Submit
-                    </Button>
+                    <Col md={12} className="justify-content-end mt-sm-4">
+                        <Button variant="contained" type="submit" color="secondary" className={!isFilled ? disableButton : ''} >
+                            Отправить
+                        </Button>
+                    </Col>
                 </Row>
             </form>
         </Col>

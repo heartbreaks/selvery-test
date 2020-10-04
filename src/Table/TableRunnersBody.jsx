@@ -5,7 +5,6 @@ import {TableBody, TableCell, TableRow} from '@material-ui/core';
 function TableRunnersBody(props) {
     const {order, orderBy, stableSort, getComparator, listUsers, rowsPerPage, page} = props
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, listUsers.length - page * rowsPerPage);
-
     return (
         <TableBody>
             {stableSort(listUsers, getComparator(order, orderBy))
@@ -16,15 +15,14 @@ function TableRunnersBody(props) {
                             hover
                             role="checkbox"
                             tabIndex={-1}
-                            key={row.name}
-                        >
-                            <TableCell component="th" scope="row" padding="none">
+                            key={row.id}>
+                            <TableCell component="th" align="center" scope="row" padding="none">
                                 {row.name}
                             </TableCell>
-                            <TableCell align="right">{row.date}</TableCell>
-                            <TableCell align="right">{row.regDate}</TableCell>
-                            <TableCell align="left">{row.payment}</TableCell>
-                            <TableCell align="left">{row.distance}</TableCell>
+                            <TableCell align="center">{row.date}</TableCell>
+                            <TableCell align="center">{row.regDate}</TableCell>
+                            <TableCell align="center">${row.payment}</TableCell>
+                            <TableCell align="center">{row.distance} км</TableCell>
                         </TableRow>
                     );
                 })}
