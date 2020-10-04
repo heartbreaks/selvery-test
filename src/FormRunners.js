@@ -9,7 +9,7 @@ import {TextMaskCustom} from './Table/TextMaskCustom'
 function FormRunners(props){
     const [values, setValues] = React.useState({
         id: '', name: '', date: '2017-05-24', email: '',
-        phone: '+7', distance: '', payment: 0
+        phone: '+7', distance: '', payment: ''
     })
     const [changed, setChange] = React.useState({
         name: false, email: false, phone: false,
@@ -89,6 +89,7 @@ function FormRunners(props){
                             id="standard-adornment-amount"
                             onChange={changeInputHandler('payment')}
                             name="payment"
+                            placeholder='0'
                             value={values.payment}
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
                         />
