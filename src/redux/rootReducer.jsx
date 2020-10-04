@@ -6,7 +6,8 @@ userList = JSON.parse(userList)
 
 userList.users.map(elem => {
     let splittedDate = elem.date.split('.')
-    elem.date = new Date(splittedDate[2], splittedDate[1] - 1, splittedDate[0]).toLocaleDateString('ru-ru')
+    elem.date = new Date(splittedDate[2], splittedDate[1] - 1, splittedDate[0])
+        .toLocaleDateString('ru-ru')
     return elem
 })
 

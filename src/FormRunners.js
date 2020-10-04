@@ -7,7 +7,6 @@ import {TextField, Button, Select, MenuItem, InputAdornment, Input} from '@mater
 import {TextMaskCustom} from './Table/TextMaskCustom'
 
 function FormRunners(props){
-    const disableButton = 'Mui-disabled Mui-disabled'
     const [values, setValues] = React.useState({
         id: '', name: '', date: '2017-05-24', email: '',
         phone: '+7', distance: '', payment: 0
@@ -23,12 +22,16 @@ function FormRunners(props){
         setValues({ ...values, [prop]: event.target.value, id: Date.now(),
             regDate: new Date().toLocaleTimeString('ru-ru',{year: '2-digit',month: '2-digit',day: '2-digit'})});
         setChange({...changed, [prop]: true})
+        if (prop === 'email'){
+            let isEmail = event.target.value.search(new RegExp('^\\S+@\\S+$', 'i'))
+            setChange({...changed, email: isEmail === 0 ? true : false})
+        }
     };
     const addNewParticipant = (event) => {
         event.preventDefault()
         props.addNewPerticipiant(values)
         setValues({ ...values, name: '', date: '2017-05-24', email: '', phone: '+7', distance: '', payment: 0});
-        setChange({...changed, name: false, email: false, phone: false, distance: false, payment: false})
+        setChange({...changed, name: false, email: false, phone: false, distance: false, payment: false, emailError: false})
     };
 
     const isFilled = name && email && phone && distance && payment
@@ -56,9 +59,9 @@ function FormRunners(props){
                         <TextField name='email'
                                    onChange={changeInputHandler('email')}
                                    id="standard-basic"
-                                   type="email"
                                    value={values.email}
-                                   label="E-mail" />
+                                   label="E-mail"
+                                   {...{error: !changed.email}}/>
                     </Col>
                     <Col md={2}  className='d-flex justify-content-sm-center mt-sm-3'>
                         <Input name='phone'
@@ -91,7 +94,7 @@ function FormRunners(props){
                         />
                     </Col>
                     <Col md={12} className="justify-content-end mt-sm-4">
-                        <Button variant="contained" type="submit" color="secondary" className={!isFilled ? disableButton : ''} >
+                        <Button variant="contained" type="submit" color="secondary" className={!isFilled ? 'Mui-disabled Mui-disabled' : ''} >
                             Отправить
                         </Button>
                     </Col>
