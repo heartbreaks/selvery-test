@@ -68,7 +68,6 @@ function FormRunners(props){
                         <Input name='phone'
                                onChange={changeInputHandler('phone')}
                                id="standard-basic"
-                               type="phone"
                                value={values.phone}
                                label="Phone"
                                inputComponent={TextMaskCustom} />
@@ -90,6 +89,7 @@ function FormRunners(props){
                             id="standard-adornment-amount"
                             onChange={changeInputHandler('payment')}
                             name="payment"
+                            type="number"
                             placeholder='0'
                             value={values.payment}
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
