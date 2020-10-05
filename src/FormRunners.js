@@ -21,7 +21,8 @@ function FormRunners(props){
         event.persist()
         setValues({ ...values, [prop]: event.target.value, id: Date.now(),
             regDate: new Date().toLocaleTimeString('ru-ru',{year: '2-digit',month: '2-digit',day: '2-digit'})});
-        setChange({...changed, [prop]: true})
+
+        setChange({...changed, [prop]: event.target.value !== '' ? true : false})
         if (prop === 'email'){
             let isEmail = event.target.value.search(new RegExp('^\\S+@\\S+$', 'i'))
             setChange({...changed, email: isEmail === 0 ? true : false})
